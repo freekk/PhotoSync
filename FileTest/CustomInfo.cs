@@ -6,7 +6,7 @@ using System.IO;
 using System.Security.Cryptography;
 using log4net;
 
-namespace FileTest
+namespace PhotoSync
 {
     [Serializable]
     public class CustomInfo
@@ -17,7 +17,6 @@ namespace FileTest
         public long Length { get; set; }
         public DateTime CreationTime { get; set; }
         public DateTime LastWriteTime { get; set; }
-        public byte[] SHA1 { get; set; }
         public string Sha1String { get; set; }
 
         /// <summary>
@@ -33,7 +32,7 @@ namespace FileTest
         {
             if (fi.Length == this.Length
                 && fi.LastWriteTimeUtc == this.LastWriteTime
-                && this.SHA1.Length > 0 && this.Sha1String != null)
+                && string.IsNullOrEmpty(this.Sha1String) == false)
             {
                 // le fichier n'a pas changé
                 _logger.Debug(this.FileName + " : ok");
@@ -48,10 +47,14 @@ namespace FileTest
             using (var stream = fi.OpenRead())
             {
                 _logger.Debug(this.FileName + " : computing SHA1");
-                this.SHA1 = hash.ComputeHash(stream);
-                this.Sha1String = BitConverter.ToString(this.SHA1);
+                this.Sha1String = FormatHash(hash.ComputeHash(stream));
             }
             return this;
+        }
+
+        private static string FormatHash(byte[] hash)
+        {
+            return BitConverter.ToString(hash).Replace("-", "").ToLower();
         }
     }
 }

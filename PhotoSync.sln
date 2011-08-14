@@ -1,7 +1,12 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 11.00
 # Visual Studio 2010
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FileTest", "FileTest\FileTest.csproj", "{191CC917-0A3A-4DD1-82A2-DFDA20319862}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PhotoSync", "FileTest\PhotoSync.csproj", "{191CC917-0A3A-4DD1-82A2-DFDA20319862}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Info", "Info", "{A52A09E4-AAA1-45A4-B889-D2E3C5297031}"
+	ProjectSection(SolutionItems) = preProject
+		todo.txt = todo.txt
+	EndProjectSection
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -13,10 +18,6 @@ Global
 		{191CC917-0A3A-4DD1-82A2-DFDA20319862}.Debug|x86.Build.0 = Debug|x86
 		{191CC917-0A3A-4DD1-82A2-DFDA20319862}.Release|x86.ActiveCfg = Release|x86
 		{191CC917-0A3A-4DD1-82A2-DFDA20319862}.Release|x86.Build.0 = Release|x86
-		{FCAB0907-6977-4F4D-8D8F-2167D55A33FD}.Debug|x86.ActiveCfg = Debug|x86
-		{FCAB0907-6977-4F4D-8D8F-2167D55A33FD}.Debug|x86.Build.0 = Debug|x86
-		{FCAB0907-6977-4F4D-8D8F-2167D55A33FD}.Release|x86.ActiveCfg = Release|x86
-		{FCAB0907-6977-4F4D-8D8F-2167D55A33FD}.Release|x86.Build.0 = Release|x86
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

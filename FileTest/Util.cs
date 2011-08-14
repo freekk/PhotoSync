@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.IO;
 
-namespace FileTest
+namespace PhotoSync
 {
     public static class Util
     {

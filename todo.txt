@@ -1,0 +1,1 @@
+- lock du repository lors de du push (via tentative d'écriture d'un fichier local)

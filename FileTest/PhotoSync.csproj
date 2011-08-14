@@ -8,7 +8,7 @@
     <ProjectGuid>{191CC917-0A3A-4DD1-82A2-DFDA20319862}</ProjectGuid>
     <OutputType>Exe</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>FileTest</RootNamespace>
+    <RootNamespace>PhotoSync</RootNamespace>
     <AssemblyName>FileTest</AssemblyName>
     <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
     <TargetFrameworkProfile>

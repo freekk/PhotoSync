@@ -10,7 +10,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using System.Diagnostics;
 
-namespace FileTest
+namespace PhotoSync
 {
     public class Repository
     {
@@ -120,16 +120,20 @@ namespace FileTest
                 Stopwatch watch = Stopwatch.StartNew();
                 var filesEnumerator = new DirectoryInfo(this.RootPath).EnumerateFiles("*", SearchOption.AllDirectories);
                 
+                long repoSize = filesEnumerator.Sum(f => f.Length);
+
                 int repoFileCount = filesEnumerator.Count();
                 _logger.InfoFormat("Refresh du repository '{0}' : {1} fichiers ({2:0.00} go).", 
                     this.RootPath, 
                     repoFileCount,
-                    filesEnumerator.Sum(f => Convert.ToDouble(f.Length)) / 1024 / 1024 / 1024);
+                    FileLength.ToMegaBytes(repoSize));
 
                 Stopwatch logWatch = Stopwatch.StartNew();
                 int index = 0;
+                List<FileInfo> lastBatch = new List<FileInfo>();
                 foreach (var fi in filesEnumerator)
                 {
+                    lastBatch.Add(fi);
                     if (fi.Name == SnapshotFileName)
                     {
                         // on saute le fichier de snapshot
@@ -148,7 +152,17 @@ namespace FileTest
 
                     if (logWatch.ElapsedMilliseconds >= 5000)
                     {
-                        _logger.InfoFormat("Refresh : {0} %", Convert.ToDouble(index)* 100d / repoFileCount);
+                        long lastBatchSize = lastBatch.Sum(f => f.Length);
+                        long remaining = repoSize -  lastBatchSize;
+                        double bytesPerSec = Convert.ToDouble(lastBatchSize / (logWatch.ElapsedMilliseconds / 1000));
+                        TimeSpan etaSec = TimeSpan.FromSeconds(remaining / bytesPerSec);
+
+                        _logger.InfoFormat("Refresh : {0:P2} - {1:0.00} Mo/s - eta : {2}", 
+                            Convert.ToDouble(index) / repoFileCount,
+                            FileLength.ToMegaBytes(bytesPerSec),
+                            etaSec);
+
+                        lastBatch.Clear();
                         logWatch.Reset();
                         logWatch.Start();
                     }
@@ -167,10 +181,14 @@ namespace FileTest
         {
             var master = new Repository(masterDir, cts);
 
-            // hasardeux
+            if (cts.Token.IsCancellationRequested)
+            {
+                return;
+            }
+
             var task = Task.Factory
                 .StartNew(_ => PushTo(master, cts), cts)
-                .ContinueWith(_ => PullFrom(master, options ?? SyncOptions.Default(), cts), TaskContinuationOptions.OnlyOnRanToCompletion)
+                .ContinueWith(_ => PullFrom(master, options ?? SyncOptions.Default(), cts), TaskContinuationOptions.NotOnCanceled)
                 .ContinueWith(_ => cts.Cancel());
 
             task.Wait();
@@ -204,7 +222,7 @@ namespace FileTest
                 // purge des fichiers en trop pour le repo local
                 var mapToCopy = filesToCopy.ToDictionary(f => f.FileName);
                 int countDeleted = 0;
-                foreach (var f in Map.Values)
+                foreach (var f in this.Map.Values)
                 {
                     if (mapToCopy.ContainsKey(f.FileName) == false)
                     {

@@ -11,7 +11,7 @@ using System.Collections.Concurrent;
 using System.Runtime.Serialization.Formatters.Binary;
 using log4net;
 
-namespace FileTest
+namespace PhotoSync
 {
     class Program
     {
@@ -25,7 +25,7 @@ namespace FileTest
             InitalizeLog4Net();
 
             string localDirPath = @"C:\Outils\FileTest\Local";
-            string masterDirPath = @"C:\Users\Laurent\Pictures\Photos LIGER\2011";
+            string masterDirPath = @"C:\Users\Laurent\Pictures\Photos LIGER\";
 
             var filesEnumerator = new DirectoryInfo(localDirPath).EnumerateFiles("*", SearchOption.AllDirectories);
             int count = filesEnumerator.Count();
@@ -45,23 +45,23 @@ namespace FileTest
             breakTask = Task.Factory.StartNew(() => { BreakExecution(cts); }, cts.Token);
             syncDir.SyncWithMaster(masterDirPath, new SyncOptions() { MaxLocalStorage = FileLength.FromGigaBytes(7) }, cts);
 
-            var doublons = syncDir.Map.Values
-                .GroupBy(ci => BitConverter.ToString(ci.SHA1).Replace("-", "").ToLower())
-                .Where(g => g.Count() > 1);
+            //var doublons = syncDir.Map.Values
+            //    .GroupBy(ci => ci.Sha1String)
+            //    .Where(g => g.Count() > 1);
 
-            int totalDoublons = 0;
-            // affichage des doublons : 
-            foreach (var group in doublons)
-            {
-                foreach (var item in group)
-                {
-                    Console.WriteLine("{0} : {1}", group.Key, item.FileName);
-                }
-                totalDoublons += group.Count();
-                Console.WriteLine("-------- {0} doublons ---------", group.Count());
-            }
+            //int totalDoublons = 0;
+            //// affichage des doublons : 
+            //foreach (var group in doublons)
+            //{
+            //    foreach (var item in group)
+            //    {
+            //        Console.WriteLine("{0} : {1}", group.Key, item.FileName);
+            //    }
+            //    totalDoublons += group.Count();
+            //    Console.WriteLine("-------- {0} doublons ---------", group.Count());
+            //}
 
-            Console.WriteLine("-------- {0} doublons au total ---------", totalDoublons);
+            //Console.WriteLine("-------- {0} doublons au total ---------", totalDoublons);
             Console.WriteLine("Appuyer sur une touche pour fermer cette fenetre.");
             Console.Read();
         }
